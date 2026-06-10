@@ -81,7 +81,7 @@ export default function FilterBar({ genre, mood, sort, onGenre, onMood, onSort, 
       </div>
 
       {/* 장르 칩 */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }} className='chip-row'>
         <Chip label="전체 장르" active={!genre} accent="linear-gradient(135deg,#3a3a44,#56566a)" onClick={() => onGenre(null)} isDark={isDark} />
         {GENRES.map((g) => (
           <Chip key={g} label={g} active={genre === g} accent={genreGradient(g, 135)} onClick={() => onGenre(genre === g ? null : g)} isDark={isDark} />
@@ -89,7 +89,7 @@ export default function FilterBar({ genre, mood, sort, onGenre, onMood, onSort, 
       </div>
 
       {/* 무드 칩 */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }} className='chip-row'>
         <Chip label="전체 무드" active={!mood} accent="linear-gradient(135deg,#3a3a44,#56566a)" onClick={() => onMood(null)} isDark={isDark} />
         {MOODS.map((m) => (
           <Chip key={m} label={m} active={mood === m} accent="linear-gradient(135deg,#b9a4ff,#8db4ff)" onClick={() => onMood(mood === m ? null : m)} isDark={isDark} />

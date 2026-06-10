@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // Soundiary · TrackItem — 미리듣기 기능
 // ---------------------------------------------------------------------------
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAudio } from '../context/AudioContext.jsx';
 import { glass, useHover, StarRating, Icon } from '../ui.jsx';
 import { genreGradient, genreGlow, fmtDate } from '../data.js';
@@ -27,7 +27,7 @@ function IconBtn({ icon, label, onClick, danger, isDark = false }) {
 
 function useArtworkColor(artworkUrl) {
   const [color, setColor] = useState(null);
-  useState(() => {
+  useEffect(() => {
     if (!artworkUrl) { setColor(null); return; }
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -91,9 +91,9 @@ export default function TrackItem({ track, onEdit, onDelete, onDetail, darkMode:
       )}
 
       {track.artworkUrl ? (
-        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', padding: '14px 0 14px 14px' }}>
+        <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', padding: '14px 0 14px 14px' }} className='track-artwork-wrap'>
           <div style={{ position: 'relative' }}>
-            <img src={track.artworkUrl} alt={track.album} style={{
+            <img src={track.artworkUrl} alt={track.album} className='track-artwork' style={{
               width: 80, height: 80, objectFit: 'cover', borderRadius: 12, display: 'block',
               boxShadow: artworkColor && hovered ? '0 8px 24px rgba(' + artworkColor + ', 0.5)' : '0 4px 12px rgba(0,0,0,0.2)',
             }} />
@@ -126,10 +126,10 @@ export default function TrackItem({ track, onEdit, onDelete, onDetail, darkMode:
         <div style={{ width: 6, flexShrink: 0, borderRadius: 999, margin: '2px 0', background: genreGradient(track.genre, 180), boxShadow: '0 0 16px ' + glow + 'cc' }} />
       )}
 
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 9, padding: '16px 18px' }}>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 9, padding: '16px 18px' }} className='track-body'>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 17.5, fontWeight: 700, color: 'var(--text-1)', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div className='track-title' style={{ fontSize: 17.5, fontWeight: 700, color: 'var(--text-1)', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {track.title}
             </div>
             <div style={{ marginTop: 2, fontSize: 13.5, fontWeight: 500, color: 'var(--text-2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Soundiary · Responsive
+   ========================================================================== */
+
+/* ---- 공통 ---- */
+:root {
+  --maxw: 720px;
+  --page-pad: 38px 18px 80px;
+}
+
+/* ========== 태블릿 (768px ~ 1023px) ========== */
+@media (max-width: 1023px) {
+  :root {
+    --maxw: 600px;
+    --page-pad: 28px 16px 80px;
+  }
+}
+
+/* ========== 모바일 (767px 이하) ========== */
+@media (max-width: 767px) {
+  :root {
+    --maxw: 100%;
+    --page-pad: 20px 14px 100px;
+  }
+
+  /* 헤더 통계 카드 */
+  .stat-cards {
+    gap: 8px;
+  }
+
+  /* 검색바 */
+  .search-wrap {
+    height: 46px;
+  }
+
+  /* 필터 칩 스크롤 */
+  .chip-row {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .chip-row::-webkit-scrollbar { display: none; }
+
+  /* 카드 앨범커버 작게 */
+  .track-artwork {
+    width: 68px !important;
+    height: 68px !important;
+  }
+
+  /* 카드 패딩 줄이기 */
+  .track-body {
+    padding: 12px 14px !important;
+  }
+
+  /* 카드 제목 폰트 */
+  .track-title {
+    font-size: 15px !important;
+  }
+
+  /* 통계 카드 숫자 */
+  .stat-value {
+    font-size: 22px !important;
+  }
+
+  /* 스트릭 폰트 */
+  .streak-value {
+    font-size: 22px !important;
+  }
+}
+
+/* ========== 작은 모바일 (374px 이하) ========== */
+@media (max-width: 374px) {
+  :root {
+    --page-pad: 16px 12px 90px;
+  }
+
+  .stat-value {
+    font-size: 18px !important;
+  }
+}
+
+/* ========== TrackItem 모바일 ========== */
+@media (max-width: 767px) {
+
+  /* 헤더 타이틀 작게 */
+  h1 { font-size: 22px !important; }
+
+  /* 헤더 버튼 */
+  .header-add-btn {
+    padding: 0 14px !important;
+    height: 40px !important;
+    font-size: 13px !important;
+  }
+
+  /* 모달 패딩 */
+  .modal-inner {
+    padding: 20px 18px !important;
+  }
+
+  /* 장르/무드 선택 버튼 wrap */
+  .genre-wrap, .mood-wrap {
+    gap: 6px !important;
+  }
+
+  /* 스트릭 카드 */
+  .streak-card {
+    padding: 12px 14px !important;
+  }
+
+  /* 통계 바차트 */
+  .stats-chart {
+    padding: 14px 16px !important;
+  }
+
+  /* TrackDetail 모달 */
+  .detail-modal {
+    border-radius: 24px !important;
+  }
+
+  /* 공유카드 버튼 위치 */
+  .share-btn-overlay {
+    top: 10px !important;
+    right: 50px !important;
+  }
+
+  /* Footer */
+  footer {
+    padding-top: 16px !important;
+    padding-bottom: 24px !important;
+  }
+}
+
+/* ========== 태블릿 필터바 ========== */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .chip-row {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+}
+
+/* ========== TrackItem 세부 반응형 ========== */
+@media (max-width: 767px) {
+  .track-artwork { width: 68px !important; height: 68px !important; border-radius: 10px !important; }
+  .track-artwork-wrap { padding: 12px 0 12px 12px !important; }
+  .track-body { padding: 12px 14px !important; gap: 7px !important; }
+  .track-title { font-size: 15.5px !important; }
+  .stat-cards { gap: 8px !important; }
+  .stat-cards > div { padding: 12px 12px 11px !important; }
+  .chip-row { flex-wrap: nowrap !important; overflow-x: auto !important; padding-bottom: 4px; }
+  .chip-row::-webkit-scrollbar { display: none; }
+}

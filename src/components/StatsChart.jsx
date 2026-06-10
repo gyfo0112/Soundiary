@@ -4,7 +4,7 @@
 import { glass } from "../ui.jsx";
 import { GENRE_GRADIENTS } from "../data.js";
 
-export default function StatsChart({ tracks }) {
+export default function StatsChart({ tracks, isDark = false }) {
   if (!tracks.length) return null;
 
   const counts = {};
@@ -26,7 +26,7 @@ export default function StatsChart({ tracks }) {
               <div style={{ width: 62, fontSize: 12, fontWeight: 600, color: "var(--text-2)", flexShrink: 0, textAlign: "right" }}>
                 {genre}
               </div>
-              <div style={{ flex: 1, height: 10, borderRadius: 999, background: "rgba(0,0,0,0.06)", overflow: "hidden" }}>
+              <div style={{ flex: 1, height: 10, borderRadius: 999, background: isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)", overflow: "hidden" }}>
                 <div style={{
                   height: "100%",
                   width: `${pct}%`,

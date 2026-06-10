@@ -67,7 +67,7 @@ export default function Header({ stats, onAdd, darkMode, onToggleDark }) {
           <AddButton onClick={onAdd} />
         </div>
       </div>
-      <div style={{ display: 'flex', gap: 12 }}>
+      <div style={{ display: 'flex', gap: 12 }} className='stat-cards'>
         <StatCard value={stats.total} label='기록한 곡' />
         <StatCard value={stats.avg} label='평균 평점' sub='★ 5점 만점' />
         <StatCard value={stats.topGenre || '—'} label='최다 장르' />

@@ -2,7 +2,6 @@
 // Soundiary · App
 // ---------------------------------------------------------------------------
 import { useState, useEffect, useMemo } from 'react';
-import html2canvas from 'html2canvas';
 import Header from './components/Header.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import FilterBar from './components/FilterBar.jsx';
@@ -115,18 +114,8 @@ export default function App() {
 
   const clearFilters = () => { setQuery(''); setGenre(null); setMood(null); };
 
-  const handleSaveAll = async () => {
-    const el = document.getElementById('track-list-container');
-    if (!el) return;
-    const canvas = await html2canvas(el, { backgroundColor: null, scale: 2, useCORS: true });
-    const link = document.createElement('a');
-    link.download = 'Soundiary-playlist.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  };
-
   return (
-    <div style={{ minHeight: '100%', padding: '38px 18px 80px' }}>
+    <div style={{ minHeight: '100%', padding: 'var(--page-pad)' }}>
       <div className='orbs'>
         <div className='orb a' /><div className='orb b' /><div className='orb c' /><div className='orb d' />
       </div>
@@ -136,7 +125,7 @@ export default function App() {
         <div style={{ ...glass({ radius: 24 }), padding: '18px 18px 20px' }}>
           <FilterBar genre={genre} mood={mood} sort={sort} count={visible.length} onGenre={setGenre} onMood={setMood} onSort={setSort} darkMode={darkMode} />
         </div>
-        <StatsChart tracks={tracks} />
+        <StatsChart tracks={tracks} isDark={darkMode} />
         <Streak tracks={tracks} isDark={darkMode} />
         <div id='track-list-container'>
           <TrackList
