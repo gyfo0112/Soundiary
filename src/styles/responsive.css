@@ -149,3 +149,10 @@
   .chip-row { flex-wrap: nowrap !important; overflow-x: auto !important; padding-bottom: 4px; }
   .chip-row::-webkit-scrollbar { display: none; }
 }
+/* ========== 신규 카드 (차트 배너 / 기록 캘린더 / 월간 리포트) ========== */
+@media (max-width: 767px) {
+  .sd-banner {
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+  }
+}

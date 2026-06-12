@@ -50,7 +50,7 @@ function useArtworkColor(artworkUrl) {
 
 export default function TrackItem({ track, onEdit, onDelete, onDetail, darkMode: isDark = false }) {
   const [hovered, , bind] = useHover();
-  const { playingId, toggle } = useAudio();
+  const { playingId, progress, toggle } = useAudio();
   const playing = playingId === track.id;
   const glow = genreGlow(track.genre);
   const artworkColor = useArtworkColor(track.artworkUrl);
@@ -87,7 +87,7 @@ export default function TrackItem({ track, onEdit, onDelete, onDetail, darkMode:
       }}
     >
       {playing && (
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: genreGradient(track.genre, 90), animation: 'progressBar 30s linear forwards' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, height: 3, width: progress + '%', background: genreGradient(track.genre, 90), boxShadow: '0 0 8px ' + glow + 'aa', transition: 'width .1s linear' }} />
       )}
 
       {track.artworkUrl ? (
@@ -163,7 +163,7 @@ export default function TrackItem({ track, onEdit, onDelete, onDetail, darkMode:
           {fmtDate(track.date)}
         </span>
       </div>
-      <style>{'@keyframes progressBar { from { width: 0%; } to { width: 100%; } }'}</style>
+      
     </div>
   );
 }

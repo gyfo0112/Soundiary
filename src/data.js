@@ -35,7 +35,8 @@ export function uid() {
 }
 
 export function todayISO() {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 
 export function fmtDate(iso) {
@@ -69,7 +70,7 @@ export const SEED = [
     artworkUrl: '',
   },
   {
-    id: uid(), title: 'YOASOBIの夜に駆ける', artist: 'YOASOBI', album: 'THE BOOK',
+    id: uid(), title: '夜に駆ける', artist: 'YOASOBI', album: 'THE BOOK',
     genre: 'J-Pop', mood: '슬픔', rating: 5, date: '2026-05-10',
     memo: '멜로디가 너무 아름다워서 처음 들었을 때 소름이 돋았다.',
     artworkUrl: '',

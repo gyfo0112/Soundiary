@@ -1,16 +1,19 @@
 // ---------------------------------------------------------------------------
 // Soundiary · App
 // ---------------------------------------------------------------------------
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Header from './components/Header.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import FilterBar from './components/FilterBar.jsx';
 import TrackList from './components/TrackList.jsx';
 import TrackForm from './components/TrackForm.jsx';
 import TrackDetail from './components/TrackDetail.jsx';
+import ChartPanel from './components/ChartPanel.jsx';
 import StatsChart from './components/StatsChart.jsx';
 import ToastContainer, { toast } from './components/Toast.jsx';
 import Streak from './components/Streak.jsx';
+import Heatmap from './components/Heatmap.jsx';
+import MonthlyRecap from './components/MonthlyRecap.jsx';
 import { glass } from './ui.jsx';
 import { SEED, uid } from './data.js';
 
@@ -67,6 +70,37 @@ export default function App() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(tracks)); } catch (e) {}
   }, [tracks]);
 
+  // 미리듣기/커버가 없는 기록을 iTunes에서 자동 보강 (시드 데이터 포함)
+  const enrichedRef = useRef(false);
+  useEffect(() => {
+    if (enrichedRef.current) return;
+    enrichedRef.current = true;
+    const targets = tracks.filter((t) => !t.previewUrl || !t.artworkUrl);
+    if (!targets.length) return;
+    (async () => {
+      const find = async (term) => {
+        try {
+          const res = await fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(term) + '&entity=song&limit=1&country=KR');
+          const data = await res.json();
+          return (data.results && data.results[0]) || null;
+        } catch (e) { return null; }
+      };
+      const updates = {};
+      await Promise.all(targets.map(async (t) => {
+        let item = await find(t.title + ' ' + t.artist);
+        if (!item) item = await find(t.title);
+        if (!item) return;
+        updates[t.id] = {
+          artworkUrl: t.artworkUrl || (item.artworkUrl100 || '').replace('100x100', '600x600'),
+          previewUrl: t.previewUrl || item.previewUrl || '',
+        };
+      }));
+      if (Object.keys(updates).length) {
+        setTracks((prev) => prev.map((t) => (updates[t.id] ? { ...t, ...updates[t.id] } : t)));
+      }
+    })();
+  }, []);
+
   const stats = useMemo(() => {
     const total = tracks.length;
     const avg = total ? (tracks.reduce((s, t) => s + (t.rating || 0), 0) / total).toFixed(1) : '0.0';
@@ -97,6 +131,7 @@ export default function App() {
   const isFiltered = !!(query.trim() || genre || mood);
 
   const openAdd = () => { setEditing(null); setFormOpen(true); };
+  const openFromChart = (prefill) => { setEditing(prefill); setFormOpen(true); };
   const openEdit = (t) => { setEditing(t); setFormOpen(true); };
   const closeForm = () => { setFormOpen(false); setEditing(null); };
 
@@ -122,11 +157,14 @@ export default function App() {
       <div style={{ maxWidth: 'var(--maxw)', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 22 }}>
         <Header stats={stats} onAdd={openAdd} darkMode={darkMode} onToggleDark={() => setDarkMode(v => !v)} />
         <SearchBar value={query} onChange={setQuery} darkMode={darkMode} />
+        <ChartPanel isDark={darkMode} onPick={openFromChart} />
         <div style={{ ...glass({ radius: 24 }), padding: '18px 18px 20px' }}>
           <FilterBar genre={genre} mood={mood} sort={sort} count={visible.length} onGenre={setGenre} onMood={setMood} onSort={setSort} darkMode={darkMode} />
         </div>
         <StatsChart tracks={tracks} isDark={darkMode} />
         <Streak tracks={tracks} isDark={darkMode} />
+        <Heatmap tracks={tracks} isDark={darkMode} />
+        <MonthlyRecap tracks={tracks} isDark={darkMode} />
         <div id='track-list-container'>
           <TrackList
             tracks={visible} isFiltered={isFiltered}

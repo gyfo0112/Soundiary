@@ -45,9 +45,22 @@ function ArtistPage({ artist, isDark, onSelect, onClose }) {
   const [loading, setLoading] = useState(!artist.tracks?.length);
 
   useEffect(() => {
+    if (artist.id) {
+      // artistId lookup — 이름 퍼지 매칭 대신 정확한 아티스트의 곡만 가져옴
+      if (!artist.tracks?.length) setLoading(true);
+      fetch('https://itunes.apple.com/lookup?id=' + artist.id + '&entity=song&limit=50&country=KR')
+        .then(r => r.json())
+        .then(d => {
+          const songs = (d.results || []).filter(x => x.wrapperType === 'track');
+          if (songs.length) setTracks(songs);
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+      return;
+    }
     if (artist.tracks?.length) return;
     setLoading(true);
-    fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(artist.name) + '&entity=song&attribute=artistTerm&limit=50')
+    fetch('https://itunes.apple.com/search?term=' + encodeURIComponent(artist.name) + '&entity=song&attribute=artistTerm&limit=50&country=KR')
       .then(r => r.json())
       .then(d => {
         const al = artist.name.toLowerCase();
@@ -60,7 +73,7 @@ function ArtistPage({ artist, isDark, onSelect, onClose }) {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [artist.name]);
+  }, [artist.id, artist.name]);
 
   return (
     <div onMouseDown={onClose} style={{ position: 'fixed', inset: 0, zIndex: 400, background: 'rgba(60,60,90,0.4)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
@@ -118,7 +131,7 @@ function ArtistPage({ artist, isDark, onSelect, onClose }) {
 
 export default function TrackForm({ initial, onSave, onClose, existingTracks = [] }) {
   const isDark = document.body.classList.contains('dark');
-  const editing = !!initial;
+  const editing = !!initial?.id;
   const [title, setTitle] = useState(initial?.title || '');
   const [artist, setArtist] = useState(initial?.artist || '');
   const [album, setAlbum] = useState(initial?.album || '');
@@ -128,7 +141,7 @@ export default function TrackForm({ initial, onSave, onClose, existingTracks = [
   const [mood, setMood] = useState(initial?.mood || '신남');
   const [rating, setRating] = useState(initial?.rating || 5);
   const [memo, setMemo] = useState(initial?.memo || '');
-  const [date, setDate] = useState(initial?.date || new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(initial?.date || todayISO());
   const [tried, setTried] = useState(false);
   const [dupError, setDupError] = useState('');
   const [searching, setSearching] = useState(false);
@@ -177,7 +190,7 @@ export default function TrackForm({ initial, onSave, onClose, existingTracks = [
       let results = [];
       if (title.trim() && artist.trim()) {
         const q = encodeURIComponent(title.trim() + ' ' + artist.trim());
-        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&limit=20');
+        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&limit=20&country=KR');
         const data = await res.json();
         results = data.results || [];
         const al = artist.trim().toLowerCase();
@@ -185,7 +198,7 @@ export default function TrackForm({ initial, onSave, onClose, existingTracks = [
         if (filtered.length > 0) results = filtered;
       } else if (artist.trim() && !title.trim()) {
         const q = encodeURIComponent(artist.trim());
-        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&attribute=artistTerm&limit=50');
+        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&attribute=artistTerm&limit=50&country=KR');
         const data = await res.json();
         const al = artist.trim().toLowerCase();
         // 아티스트명이 정확히 일치하는 곡만 필터링
@@ -198,7 +211,7 @@ export default function TrackForm({ initial, onSave, onClose, existingTracks = [
         if (results.length === 0) results = data.results || [];
       } else {
         const q = encodeURIComponent(title.trim());
-        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&limit=20');
+        const res = await fetch('https://itunes.apple.com/search?term=' + q + '&entity=song&limit=20&country=KR');
         const data = await res.json();
         results = data.results || [];
       }
@@ -267,7 +280,7 @@ export default function TrackForm({ initial, onSave, onClose, existingTracks = [
                   {/* 아티스트 카드 - 아티스트 검색 시 맨 위에 표시 */}
                   {artist.trim() && !title.trim() && allResults.length > 0 && (
                     <button
-                      onClick={() => setArtistPage({ name: allResults[0].artistName, img: allResults[0].artworkUrl100?.replace('100x100', '600x600') || '', tracks: allResults })}
+                      onClick={() => setArtistPage({ id: allResults[0].artistId, name: allResults[0].artistName, img: allResults[0].artworkUrl100?.replace('100x100', '600x600') || '', tracks: allResults })}
                       style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 14, textAlign: 'left', width: '100%', background: isDark ? 'linear-gradient(135deg,rgba(167,139,250,0.2),rgba(129,140,248,0.15))' : 'linear-gradient(135deg,rgba(120,90,250,0.1),rgba(99,102,241,0.08))', border: isDark ? '1px solid rgba(167,139,250,0.35)' : '1px solid rgba(120,90,250,0.25)', cursor: 'pointer', transition: 'all .15s ease', marginBottom: 4 }}
                       onMouseEnter={e => e.currentTarget.style.background = isDark ? 'linear-gradient(135deg,rgba(167,139,250,0.3),rgba(129,140,248,0.25))' : 'linear-gradient(135deg,rgba(120,90,250,0.18),rgba(99,102,241,0.14))'}
                       onMouseLeave={e => e.currentTarget.style.background = isDark ? 'linear-gradient(135deg,rgba(167,139,250,0.2),rgba(129,140,248,0.15))' : 'linear-gradient(135deg,rgba(120,90,250,0.1),rgba(99,102,241,0.08))'}

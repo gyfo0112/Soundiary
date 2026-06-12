@@ -6,12 +6,14 @@ import { useState } from 'react';
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 const MONTHS = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
 
+const localISO = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+
 export default function DatePicker({ value, onChange, isDark = false }) {
   const today = new Date();
   const selected = value ? new Date(value + 'T00:00:00') : today;
   const [view, setView] = useState({ year: selected.getFullYear(), month: selected.getMonth() });
   const [open, setOpen] = useState(false);
-  const [tempDate, setTempDate] = useState(value || new Date().toISOString().slice(0, 10));
+  const [tempDate, setTempDate] = useState(value || localISO(new Date()));
 
   const firstDay = new Date(view.year, view.month, 1).getDay();
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
@@ -123,7 +125,7 @@ export default function DatePicker({ value, onChange, isDark = false }) {
 
             {/* 하단 버튼 */}
             <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-              <button type='button' onClick={() => { const t = new Date(); onChange(t.toISOString().slice(0, 10)); setView({ year: t.getFullYear(), month: t.getMonth() }); setOpen(false); }} style={{
+              <button type='button' onClick={() => { const t = new Date(); onChange(localISO(t)); setView({ year: t.getFullYear(), month: t.getMonth() }); setOpen(false); }} style={{
                 flex: 1, height: 38, borderRadius: 12,
                 fontSize: 13, fontWeight: 600,
                 color: isDark ? 'rgba(180,150,255,0.9)' : 'rgba(120,90,250,0.9)',

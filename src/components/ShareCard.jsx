@@ -2,6 +2,7 @@
 // Soundiary · ShareCard — Canvas 공유 카드 생성
 // ---------------------------------------------------------------------------
 import { useState } from 'react';
+import { shareOrDownloadImage } from '../share.js';
 
 async function getAvgColor(img) {
   const canvas = document.createElement('canvas');
@@ -234,10 +235,7 @@ export default function ShareCardButton({ track, isDark = false, position = 'nor
     setLoading(true);
     try {
       const dataUrl = await generateShareCard(track);
-      const link = document.createElement('a');
-      link.download = track.title + ' - ' + track.artist + '.png';
-      link.href = dataUrl;
-      link.click();
+      await shareOrDownloadImage(dataUrl, track.title + ' - ' + track.artist + '.png');
     } catch(err) { console.error(err); }
     setLoading(false);
   };

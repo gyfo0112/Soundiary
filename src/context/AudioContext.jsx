@@ -52,10 +52,13 @@ export function AudioProvider({ children }) {
       setPlayingId(null);
       setProgress(0);
       setCurrentTime(0);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+      audioRef.current = null;
+      setDuration(30);
     };
 
-    audio.play();
+    audio.onerror = () => { if (audioRef.current === audio) stopCurrent(); };
+    audio.play().catch(() => { if (audioRef.current === audio) stopCurrent(); });
     setPlayingId(track.id);
     setProgress(0);
     setCurrentTime(0);
